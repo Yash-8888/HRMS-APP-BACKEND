@@ -1,24 +1,32 @@
-"""
-URL configuration for config project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/6.1/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
 from django.urls import include, path
+from rest_framework.routers import DefaultRouter
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+
+from accounts.employees import EmployeeViewSet
+from fieldvisits.views import FieldVisitViewSet
+from leaves.views import LeaveRequestViewSet, LeaveTypeViewSet
+from payroll.views import PayslipViewSet, SalaryViewSet
+from attendance.views import AttendanceViewSet
+from billing import views as billing_views
+
+router = DefaultRouter()
+router.register("field-visits", FieldVisitViewSet, basename="field-visit")
+router.register("employees", EmployeeViewSet, basename="employee")
+router.register("leaves", LeaveRequestViewSet, basename="leave")
+router.register("leave-types", LeaveTypeViewSet, basename="leave-type")
+router.register("salary", SalaryViewSet, basename="salary")
+router.register("payslips", PayslipViewSet, basename="payslip")
+router.register("attendance", AttendanceViewSet, basename="attendance")
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/auth/', include('accounts.urls')),
-    path('api/auth/', include('accounts.urls')),
+    path("admin/", admin.site.urls),
+    path("api/billing/subscription/", billing_views.subscription),
+    path("api/billing/create-order/", billing_views.create_order),
+    path("api/billing/verify/", billing_views.verify),
+    path("api/billing/webhook/", billing_views.webhook),
+    path("api/", include(router.urls)),
+    path("api/auth/", include("accounts.urls")),
+    path("api/auth/login/", TokenObtainPairView.as_view()),
+    path("api/auth/refresh/", TokenRefreshView.as_view()),
 ]
