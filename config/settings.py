@@ -151,7 +151,10 @@ REST_FRAMEWORK = {
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
-    "https://hrms-app-snowy.vercel.app/"
+    "https://hrms-app-snowy.vercel.app",
+]
+CSRF_TRUSTED_ORIGINS = [
+    "https://hrms-app-snowy.vercel.app",
 ]
 
 
